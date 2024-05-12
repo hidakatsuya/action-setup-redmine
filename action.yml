@@ -1,93 +1,140 @@
 name: Setup Redmine
 description: Setup Redmine or its distribution for testing
+author: hidakatsuya
 
 inputs:
   repository:
-    description: 'Redmine repository to setup'
+    description: 'Redmine repository to setup.'
     required: true
     default: 'redmine/redmine'
   version:
-    description: 'The branch, tag or SHEA of the repository to setup'
+    description: 'The branch, tag or SHEA of the repository to setup.'
     required: true
     default: 'master'
   database:
-    description: 'Database to use for testing'
+    description: 'Database to use for testing. Available values are sqlite3, postgresql.'
     required: true
     default: 'sqlite3'
+  ruby-version:
+    description: "Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions."
+    required: true
+  path:
+    description: 'Directory to setup Redmine.'
+    required: true
+    default: '.'
 
 runs:
   using: composite
 
-  pre-if: ${{ runner.os == 'Linux' }}
-
-  services:
-    chrome:
-      image: selenium/standalone-chrome
-      ports:
-        - 4444:4444
-    postgres:
-      image: postgres:14
-      env:
-        POSTGRES_PASSWORD: postgres
-      ports:
-        - 5432:5432
-
   steps:
-    - run: |
-        apt-get update; \
-        apt-get install -y --no-install-recommends \
-          sudo build-essential curl wget vim \
+    - name: Set up environment
+      run: |
+        echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+        echo "RAILS_ENV=test" >> $GITHUB_ENV
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+
+    - name: Get datetime for cache key
+      id: get-datetime
+      run: |
+        echo "datetime=$(date -u "+%Y%m%d%H")" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Restore Redmine source code from cache
+      uses: actions/cache/restore@v4
+      id: cache-source-restore
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.repository }}-${{ inputs.version }}-${{ steps.get-datetime.outputs.datetime }}
+
+    - name: Checkout Redmine source code
+      uses: actions/checkout@v4
+      if: ${{ steps.cache-source-restore.outputs.cache-hit != 'true' }}
+      with:
+        repository: ${{ inputs.repository }}
+        ref: ${{ inputs.version }}
+        path: ${{ inputs.path }}
+
+    - name: Save Redmine source code to cache
+      uses: actions/cache/save@v4
+      if: ${{ steps.cache-source-restore.outputs.cache-hit != 'true' }}
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ steps.cache-source-restore.outputs.cache-primary-key }}
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update; \
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
           bzr git mercurial subversion cvs \
           ghostscript \
           gsfonts \
           imagemagick libmagick++-dev \
-          libsqlite3-dev \
-          libpgsql-dev \
-          libnss3-dev \
-        ; \
-        rm -rf /var/lib/apt/lists/*; \
-        sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml;
+          libnss3-dev;
+      shell: bash
 
-    - uses: actions/cache/restore@v4
-      id: cache-source-restore
+    - name: Allow ImageMagick to read PDF files
+      run: |
+        sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml;
+      shell: bash
+
+    - name: Set up Google Chrome for system tests
+      run: |
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+        apt-get update && apt-get install -y --no-install-recommends google-chrome-stable; \
+
+        echo GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set up PostgreSQL database connection for testing
+      if: ${{ inputs.database == 'postgresql' }}
+      run: |
+        sudo apt-get install -y libpq-dev
+
+        docker run \
+          --name redmine-postgres \
+          -e POSTGRES_PASSWORD=postgres \
+          -p 5432:5432 \
+          -d postgres:14
+
+        cat <<EOS > config/database.yml
+          test:
+            adapter: postgresql
+            database: redmine_test
+            encoding: utf8
+            host: localhost
+            port: 5432
+            username: postgres
+            password: postgres
+        EOS
+      shell: bash
+      working-directory: ${{ inputs.path }}
+
+    - name: Set up SQLite3 database connection for testing
+      if: ${{ inputs.database == 'sqlite3' }}
+      run: |
+        sudo apt-get install -y libsqlite3-dev
+
+        cat <<EOS > config/database.yml
+          test:
+            adapter: sqlite3
+            database: db/test.sqlite3
+        EOS
+      shell: bash
+      working-directory: ${{ inputs.path }}
+
+    - name: Set up Ruby and install dependencies
+      uses: ruby/setup-ruby@v1
       with:
-        path: .
-        key: ${{ inputs.repository }}-${{ inputs.version }}-${{ github.sha }}
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: true
+        working-directory: ${{ inputs.path }}
 
-    - uses: actions/checkout@v4
-      if: steps.cache-source-restore.outputs.cache-hit != 'true'
-      with:
-        repository: ${{ inputs.repository }}-${{ github.sha }}
-        ref: ${{ inputs.version }}
-
-    - uses: actions/cache/save@v4
-      id: cache-source
-      with:
-        path: .
-        key: ${{ inputs.repository }}-${{ inputs.version }}-${{ github.sha }}
-
-    - run: |
-        case ${{ inputs.database }} in
-          sqlite3)
-            cat <<EOS > config/database.yml
-            test:
-              adapter: sqlite3
-              database: db/test.sqlite3
-            EOS
-            ;;
-          postgresql)
-            cat <<EOF > config/database.yml
-            test:
-              adapter: postgresql
-              encoding: utf8
-              host: postgres
-              port: 5432
-              username: postgres
-              password: postgres
-            EOS
-            ;;
-          *)
-            echo "Unknown database: ${{ inputs.database }}"
-            exit 1
-            ;;
-        esac
+    - name: Set up database
+      run: |
+        bin/rails db:create db:migrate
+      shell: bash
+      working-directory: ${{ inputs.path }}

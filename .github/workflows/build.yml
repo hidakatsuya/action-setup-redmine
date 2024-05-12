@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - dev/**
+    paths-ignore:
+      - '*.md'
+  pull_request:
+
+env:
+  REDMINE_SRC: redmine-src
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - redmine-repository: 'redmine/redmine'
+            redmine-version: '5.1-stable'
+            redmine-database: 'sqlite3'
+            ruby-version: '3.2'
+          - redmine-repository: 'redmica/redmica'
+            redmine-version: 'stable-2.4'
+            redmine-database: 'postgresql'
+            ruby-version: '3.2'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ./
+      with:
+        path: ${{ env.REDMINE_SRC }}
+        repository: ${{ matrix.redmine-repository }}
+        version: ${{ matrix.redmine-version }}
+        database: ${{ matrix.redmine-database }}
+        ruby-version: ${{ matrix.ruby-version }}
+
+    - run: |
+        bin/rails test test/unit/news_test.rb
+        bin/rails test test/system/my_page_test.rb
+      working-directory: ${{ env.REDMINE_SRC }}
