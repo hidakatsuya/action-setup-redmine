@@ -1,0 +1,93 @@
+name: Setup Redmine
+description: Setup Redmine or its distribution for testing
+
+inputs:
+  repository:
+    description: 'Redmine repository to setup'
+    required: true
+    default: 'redmine/redmine'
+  version:
+    description: 'The branch, tag or SHEA of the repository to setup'
+    required: true
+    default: 'master'
+  database:
+    description: 'Database to use for testing'
+    required: true
+    default: 'sqlite3'
+
+runs:
+  using: composite
+
+  pre-if: ${{ runner.os == 'Linux' }}
+
+  services:
+    chrome:
+      image: selenium/standalone-chrome
+      ports:
+        - 4444:4444
+    postgres:
+      image: postgres:14
+      env:
+        POSTGRES_PASSWORD: postgres
+      ports:
+        - 5432:5432
+
+  steps:
+    - run: |
+        apt-get update; \
+        apt-get install -y --no-install-recommends \
+          sudo build-essential curl wget vim \
+          bzr git mercurial subversion cvs \
+          ghostscript \
+          gsfonts \
+          imagemagick libmagick++-dev \
+          libsqlite3-dev \
+          libpgsql-dev \
+          libnss3-dev \
+        ; \
+        rm -rf /var/lib/apt/lists/*; \
+        sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml;
+
+    - uses: actions/cache/restore@v4
+      id: cache-source-restore
+      with:
+        path: .
+        key: ${{ inputs.repository }}-${{ inputs.version }}-${{ github.sha }}
+
+    - uses: actions/checkout@v4
+      if: steps.cache-source-restore.outputs.cache-hit != 'true'
+      with:
+        repository: ${{ inputs.repository }}-${{ github.sha }}
+        ref: ${{ inputs.version }}
+
+    - uses: actions/cache/save@v4
+      id: cache-source
+      with:
+        path: .
+        key: ${{ inputs.repository }}-${{ inputs.version }}-${{ github.sha }}
+
+    - run: |
+        case ${{ inputs.database }} in
+          sqlite3)
+            cat <<EOS > config/database.yml
+            test:
+              adapter: sqlite3
+              database: db/test.sqlite3
+            EOS
+            ;;
+          postgresql)
+            cat <<EOF > config/database.yml
+            test:
+              adapter: postgresql
+              encoding: utf8
+              host: postgres
+              port: 5432
+              username: postgres
+              password: postgres
+            EOS
+            ;;
+          *)
+            echo "Unknown database: ${{ inputs.database }}"
+            exit 1
+            ;;
+        esac
