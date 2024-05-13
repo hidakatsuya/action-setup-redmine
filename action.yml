@@ -1,6 +1,9 @@
 name: Setup Redmine
 description: Setup Redmine or its distribution for testing
 author: hidakatsuya
+branding:
+  icon: download
+  color: blue
 
 inputs:
   repository:
