@@ -4,22 +4,22 @@ author: hidakatsuya
 
 inputs:
   repository:
-    description: 'Redmine repository to setup.'
+    description: 'Redmine repository to setup. Default is redmine/redmine.'
     required: true
     default: 'redmine/redmine'
   version:
-    description: 'The branch, tag or SHEA of the repository to setup.'
+    description: 'The branch, tag or commit to checkout. Default is master.'
     required: true
     default: 'master'
   database:
-    description: 'Database to use for testing. Available values are sqlite3, postgresql.'
+    description: 'Database to use for testing. Available values are sqlite3, postgresql. Default is sqlite3.'
     required: true
     default: 'sqlite3'
   ruby-version:
     description: "Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions."
     required: true
   path:
-    description: 'Directory to setup Redmine.'
+    description: 'Directory to setup Redmine. Default is the current directory.'
     required: true
     default: '.'
 
