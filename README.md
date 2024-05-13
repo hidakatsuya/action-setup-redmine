@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/hidakatsuya/action-setup-redmine/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/hidakatsuya/action-setup-redmine/actions/workflows/build.yml)
 
-This GitHub Action installs Redmine and sets up an environment to run tests. It is primarily aimed at providing an environment to run tests for Redmine plugins.
+This action installs Redmine and sets up an environment to run tests. It is primarily aimed at providing an environment to run tests for Redmine plugins.
 
 ## Usage
 
