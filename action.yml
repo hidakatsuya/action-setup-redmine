@@ -56,14 +56,15 @@ runs:
 
     - name: Allow ImageMagick to read PDF files
       run: |
-        sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml;
+        sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
       shell: bash
 
     - name: Set up Google Chrome for system tests
       run: |
-        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-        apt-get update && apt-get install -y --no-install-recommends google-chrome-stable; \
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends google-chrome-stable
 
         echo GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage" >> $GITHUB_ENV
       shell: bash
@@ -71,7 +72,7 @@ runs:
     - name: Set up PostgreSQL database connection for testing
       if: ${{ inputs.database == 'postgresql' }}
       run: |
-        sudo apt-get install -y libpq-dev
+        sudo apt-get install -y --no-install-recommends libpq-dev
 
         docker run \
           --name redmine-postgres \
@@ -95,7 +96,7 @@ runs:
     - name: Set up SQLite3 database connection for testing
       if: ${{ inputs.database == 'sqlite3' }}
       run: |
-        sudo apt-get install -y libsqlite3-dev
+        sudo apt-get install -y --no-install-recommends libsqlite3-dev
 
         cat <<EOS > config/database.yml
           test:
