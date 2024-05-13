@@ -35,33 +35,12 @@ runs:
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
 
-    - name: Get datetime for cache key
-      id: get-datetime
-      run: |
-        echo "datetime=$(date -u "+%Y%m%d%H")" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - name: Restore Redmine source code from cache
-      uses: actions/cache/restore@v4
-      id: cache-source-restore
-      with:
-        path: ${{ inputs.path }}
-        key: ${{ inputs.repository }}-${{ inputs.version }}-${{ steps.get-datetime.outputs.datetime }}
-
     - name: Checkout Redmine source code
       uses: actions/checkout@v4
-      if: ${{ steps.cache-source-restore.outputs.cache-hit != 'true' }}
       with:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.version }}
         path: ${{ inputs.path }}
-
-    - name: Save Redmine source code to cache
-      uses: actions/cache/save@v4
-      if: ${{ steps.cache-source-restore.outputs.cache-hit != 'true' }}
-      with:
-        path: ${{ inputs.path }}
-        key: ${{ steps.cache-source-restore.outputs.cache-primary-key }}
 
     - name: Install dependencies
       run: |
