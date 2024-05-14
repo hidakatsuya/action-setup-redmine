@@ -16,7 +16,7 @@ This action installs Redmine and sets up an environment to run tests. It is prim
     version: 'master'
 
     # Database to use for testing. Available values are sqlite3, postgresql. Default is sqlite3.
-    databae: 'sqlite3'
+    database: 'sqlite3'
 
     # Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions.
     ruby-version: ''
