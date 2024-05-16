@@ -23,10 +23,15 @@ jobs:
             redmine-version: '5.1-stable'
             redmine-database: 'sqlite3'
             ruby-version: '3.2'
+            expected-about-db-adapter: 'SQLite'
+            expected-about-redmine-version: '5\.1\.[0-9]\.stable'
+
           - redmine-repository: 'redmica/redmica'
             redmine-version: 'stable-2.4'
             redmine-database: 'postgresql'
             ruby-version: '3.2'
+            expected-about-db-adapter: 'PostgreSQL'
+            expected-about-redmine-version: '2\.4\.[0-9]\.stable'
 
     steps:
     - uses: actions/checkout@v4
@@ -38,6 +43,13 @@ jobs:
         version: ${{ matrix.redmine-version }}
         database: ${{ matrix.redmine-database }}
         ruby-version: ${{ matrix.ruby-version }}
+
+    - run: |
+        about=$(bin/rails r "require 'redmine/version'; puts Redmine::Info.environment")
+        echo "$about"
+        echo "$about" | grep "${{ matrix.expected-about-db-adapter }}"
+        echo "$about" | grep "${{ matrix.expected-about-redmine-version }}"
+      working-directory: ${{ env.REDMINE_SRC }}
 
     - run: |
         bin/rails test test/unit/news_test.rb
