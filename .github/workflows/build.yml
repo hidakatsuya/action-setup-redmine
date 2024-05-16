@@ -16,6 +16,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    name: ${{ matrix.redmine-repository }} ${{ matrix.redmine-version }} ${{ matrix.redmine-database }}
+
     strategy:
       matrix:
         include:
@@ -28,7 +30,7 @@ jobs:
 
           - redmine-repository: 'redmica/redmica'
             redmine-version: 'stable-2.4'
-            redmine-database: 'postgresql'
+            redmine-database: 'postgres:14'
             ruby-version: '3.2'
             expected-about-db-adapter: 'PostgreSQL'
             expected-about-redmine-version: '2\.4\.[0-9]\.stable'

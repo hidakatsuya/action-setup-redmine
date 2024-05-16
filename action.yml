@@ -15,7 +15,7 @@ inputs:
     required: true
     default: 'master'
   database:
-    description: 'Database to use for testing. Available values are sqlite3, postgresql. Default is sqlite3.'
+    description: 'Database to use for testing. Available values are sqlite3 or an official PostgreSQL image tag such as postgres:14. Default is sqlite3.'
     required: true
     default: 'sqlite3'
   ruby-version:
@@ -73,7 +73,7 @@ runs:
       shell: bash
 
     - name: Set up PostgreSQL database connection for testing
-      if: ${{ inputs.database == 'postgresql' }}
+      if: ${{ startsWith(inputs.database, 'postgres:') }}
       run: |
         sudo apt-get install -y --no-install-recommends libpq-dev
 
@@ -81,7 +81,7 @@ runs:
           --name redmine-postgres \
           -e POSTGRES_PASSWORD=postgres \
           -p 5432:5432 \
-          -d postgres:14
+          -d ${{ inputs.database }}
 
         cat <<EOS > config/database.yml
           test:

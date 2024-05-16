@@ -15,7 +15,8 @@ This action installs Redmine and sets up an environment to run tests. It is prim
     # The branch, tag or commit to checkout. Default is master.
     version: 'master'
 
-    # Database to use for testing. Available values are sqlite3, postgresql. Default is sqlite3.
+    # Database to use for testing. Available values are sqlite3 or
+    # an official PostgreSQL image tag such as postgres:14. Default is sqlite3.
     database: 'sqlite3'
 
     # Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions.
@@ -36,7 +37,7 @@ See also [action.yml](./action.yml).
   with:
     repository: 'redmica/redmica'
     version: 'v2.4.2'
-    database: 'postgresql'
+    database: 'postgres:14'
     ruby-version: '3.2'
 ```
 
