@@ -15,7 +15,7 @@ inputs:
     required: true
     default: 'master'
   database:
-    description: 'Database to use for testing. Available values are sqlite3 or an official PostgreSQL image tag such as postgres:14. Default is sqlite3.'
+    description: 'Database to use for testing. Possible values are sqlite3 or PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.4.0). Default is sqlite3'
     required: true
     default: 'sqlite3'
   ruby-version:
@@ -92,6 +92,30 @@ runs:
             port: 5432
             username: postgres
             password: postgres
+        EOS
+      shell: bash
+      working-directory: ${{ inputs.path }}
+
+    - name: Set up MySQL database connection for testing
+      if: ${{ startsWith(inputs.database, 'mysql:') }}
+      run: |
+        sudo apt-get install -y --no-install-recommends default-mysql-client
+
+        docker run \
+          --name redmine-mysql \
+          -e MYSQL_ROOT_PASSWORD=password \
+          -e MYSQL_DATABASE=redmine_test \
+          -p 3306:3306 \
+          -d ${{ inputs.database }}
+
+        cat <<EOS > config/database.yml
+          test:
+            adapter: mysql2
+            database: redmine_test
+            host: 127.0.0.1
+            port: 3306
+            username: root
+            password: password
         EOS
       shell: bash
       working-directory: ${{ inputs.path }}
