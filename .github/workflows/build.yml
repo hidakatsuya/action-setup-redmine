@@ -53,14 +53,22 @@ jobs:
         database: ${{ matrix.redmine-database }}
         ruby-version: ${{ matrix.ruby-version }}
 
+    - name: Install a plugin for testing
+      run: |
+        cp -R ../.github/hello_world plugins/
+        bin/rails redmine:plugins:migrate
+      working-directory: ${{ env.REDMINE_SRC }}
+
     - run: |
         about=$(bin/rails r "require 'redmine/version'; puts Redmine::Info.environment")
         echo "$about"
         echo "$about" | grep "${{ matrix.expected-about-db-adapter }}"
         echo "$about" | grep "${{ matrix.expected-about-redmine-version }}"
+        echo "$about" | grep "hello_world"
       working-directory: ${{ env.REDMINE_SRC }}
 
     - run: |
         bin/rails test test/unit/news_test.rb
         bin/rails test test/system/my_page_test.rb
+        bin/rails redmine:plugins:test
       working-directory: ${{ env.REDMINE_SRC }}
