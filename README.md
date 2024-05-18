@@ -16,7 +16,7 @@ This action installs Redmine and sets up an environment to run tests. It is prim
     version: 'master'
 
     # Database to use for testing. Possible values are sqlite3 or
-    # PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.4.0). Default is sqlite3
+    # PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.1.0). Default is sqlite3
     database: 'sqlite3'
 
     # Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions.
