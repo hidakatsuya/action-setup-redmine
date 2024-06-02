@@ -116,6 +116,7 @@ runs:
             port: 3306
             username: root
             password: password
+            encoding: utf8mb4
         EOS
       shell: bash
       working-directory: ${{ inputs.path }}
