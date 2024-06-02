@@ -106,7 +106,9 @@ runs:
           -e MYSQL_ROOT_PASSWORD=password \
           -e MYSQL_DATABASE=redmine_test \
           -p 3306:3306 \
-          -d ${{ inputs.database }}
+          -d ${{ inputs.database }} \
+          --character-set-server=utf8mb4 \
+          --collation-server=utf8mb4_unicode_ci
 
         cat <<EOS > config/database.yml
           test:
