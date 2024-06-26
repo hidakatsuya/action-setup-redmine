@@ -136,6 +136,16 @@ runs:
       shell: bash
       working-directory: ${{ inputs.path }}
 
+    - run: |
+        touch Gemfile.local
+        # https://www.redmine.org/issues/40802
+        if grep -q "require 'blankslate'" lib/redmine/views/builders/structure.rb
+        then
+          echo 'gem "blankslate"' >> Gemfile.local
+        fi
+      shell: bash
+      working-directory: ${{ inputs.path }}
+
     - name: Set up Ruby and install dependencies
       uses: ruby/setup-ruby@v1
       with:

@@ -35,6 +35,13 @@ jobs:
             expected-about-db-adapter: 'Mysql2'
             expected-about-redmine-version: '5\.1\.[0-9]\.stable'
 
+          - redmine-repository: 'redmine/redmine'
+            redmine-version: '4.2-stable'
+            redmine-database: 'sqlite3'
+            ruby-version: '2.7'
+            expected-about-db-adapter: 'SQLite'
+            expected-about-redmine-version: '4\.2\.[0-9]\.stable'
+
           - redmine-repository: 'redmica/redmica'
             redmine-version: 'stable-2.4'
             redmine-database: 'postgres:14'
