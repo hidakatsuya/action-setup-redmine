@@ -1,4 +1,4 @@
-class CreateHellos < ActiveRecord::Migration[6.1]
+class CreateHellos < ActiveRecord::Migration[5.2]
   def change
     create_table :hellos do |t|
       t.string :world
