@@ -76,6 +76,9 @@ jobs:
 
     - run: |
         bin/rails test test/unit/news_test.rb
-        bin/rails test test/system/my_page_test.rb
+        # Run system test only when Zeitwerk is enabled (Redmine >= 5.0 or RedMica >= 2.1)
+        if grep -q zeitwerk config/application.rb ; then
+          bin/rails test test/system/my_page_test.rb
+        fi
         bin/rails redmine:plugins:test
       working-directory: ${{ env.REDMINE_SRC }}
