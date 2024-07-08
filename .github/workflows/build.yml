@@ -22,25 +22,32 @@ jobs:
       matrix:
         include:
           - redmine-repository: 'redmine/redmine'
-            redmine-version: '5.1-stable'
+            redmine-version: '4.2-stable'
             redmine-database: 'sqlite3'
-            ruby-version: '3.2'
+            ruby-version: '2.7'
             expected-about-db-adapter: 'SQLite'
-            expected-about-redmine-version: '5\.1\.[0-9]\.stable'
+            expected-about-redmine-version: '4\.2\.[0-9]\+\.stable'
 
           - redmine-repository: 'redmine/redmine'
             redmine-version: '5.1-stable'
             redmine-database: 'mysql:8.1'
             ruby-version: '3.2'
             expected-about-db-adapter: 'Mysql2'
-            expected-about-redmine-version: '5\.1\.[0-9]\.stable'
+            expected-about-redmine-version: '5\.1\.[0-9]\+\.stable'
+
+          - redmine-repository: 'redmica/redmica'
+            redmine-version: 'stable-2.0'
+            redmine-database: 'postgres:10'
+            ruby-version: '2.7'
+            expected-about-db-adapter: 'PostgreSQL'
+            expected-about-redmine-version: '2\.0\.[0-9]\+\.stable'
 
           - redmine-repository: 'redmica/redmica'
             redmine-version: 'stable-2.4'
             redmine-database: 'postgres:14'
             ruby-version: '3.2'
             expected-about-db-adapter: 'PostgreSQL'
-            expected-about-redmine-version: '2\.4\.[0-9]\.stable'
+            expected-about-redmine-version: '2\.4\.[0-9]\+\.stable'
 
     steps:
     - uses: actions/checkout@v4
@@ -69,6 +76,9 @@ jobs:
 
     - run: |
         bin/rails test test/unit/news_test.rb
-        bin/rails test test/system/my_page_test.rb
+        # Run system test only when Zeitwerk is enabled (Redmine >= 5.0 or RedMica >= 2.1)
+        if grep -q zeitwerk config/application.rb ; then
+          bin/rails test test/system/my_page_test.rb
+        fi
         bin/rails redmine:plugins:test
       working-directory: ${{ env.REDMINE_SRC }}
