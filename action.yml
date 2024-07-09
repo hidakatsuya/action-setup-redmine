@@ -45,6 +45,12 @@ runs:
         ref: ${{ inputs.version }}
         path: ${{ inputs.path }}
 
+    - name: Define Redmine version environment variables
+      run: ./scripts/set-version-envs.sh
+      shell: bash
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
+
     - name: Install dependencies
       run: |
         sudo apt-get update; \
