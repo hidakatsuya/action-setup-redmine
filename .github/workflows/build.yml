@@ -71,7 +71,8 @@ jobs:
         bin/rails redmine:plugins:migrate
       working-directory: ${{ env.REDMINE_SRC }}
 
-    - run: |
+    - name: Test Redmine environment
+      run: |
         about=$(bin/rails r "require 'redmine/version'; puts Redmine::Info.environment")
         echo "$about"
         echo "$about" | grep "${{ matrix.expected-about-db-adapter }}"
@@ -79,11 +80,15 @@ jobs:
         echo "$about" | grep "hello_world"
       working-directory: ${{ env.REDMINE_SRC }}
 
-    - run: |
-        bin/rails test test/unit/news_test.rb
-        # Run system test only if Redmine >= 5.0 or RedMica >= 2.1
-        if [ $REDMINE_VERSION_MAJOR -ge 5 ]; then
-          bin/rails test test/system/my_page_test.rb
-        fi
-        bin/rails redmine:plugins:test
+    - name: Run unit test
+      run: bin/rails test test/unit/news_test.rb
+      working-directory: ${{ env.REDMINE_SRC }}
+
+    - name: Run system test if Redmine >= 5.0
+      if: ${{ env.REDMINE_VERSION_MAJOR >= 5 }}
+      run: bin/rails test test/system/my_page_test.rb
+      working-directory: ${{ env.REDMINE_SRC }}
+
+    - name: Run plugin test
+      run: bin/rails redmine:plugins:test
       working-directory: ${{ env.REDMINE_SRC }}
