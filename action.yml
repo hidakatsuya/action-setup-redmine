@@ -142,14 +142,10 @@ runs:
       shell: bash
       working-directory: ${{ inputs.path }}
 
-    - name: Adjust Gemfile
-      run: |
-        # Ref: https://github.com/agileware-jp/redmine-plugin-orb/pull/70
-        # https://www.redmine.org/issues/40802
-        if grep -q "require 'blankslate'" lib/redmine/views/builders/structure.rb
-        then
-          echo 'gem "blankslate"' >> Gemfile
-        fi
+      # https://www.redmine.org/issues/40802
+    - name: Fix LoadError in Redmine 4.2
+      if: ${{ env.REDMINE_VERSION_MAJOR < 5 }}
+      run: echo "gem 'builder', '~> 3.2.4'" >> Gemfile.local
       shell: bash
       working-directory: ${{ inputs.path }}
 

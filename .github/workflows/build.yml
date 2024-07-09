@@ -60,6 +60,11 @@ jobs:
         database: ${{ matrix.redmine-database }}
         ruby-version: ${{ matrix.ruby-version }}
 
+    - name: Define Redmine version environment variables
+      run: ./scripts/set-version-envs.sh
+      env:
+        REDMINE_DIR: ${{ env.REDMINE_SRC }}
+
     - name: Install a plugin for testing
       run: |
         cp -R ../.github/hello_world plugins/
@@ -76,8 +81,8 @@ jobs:
 
     - run: |
         bin/rails test test/unit/news_test.rb
-        # Run system test only when Zeitwerk is enabled (Redmine >= 5.0 or RedMica >= 2.1)
-        if grep -q zeitwerk config/application.rb ; then
+        # Run system test only if Redmine >= 5.0 or RedMica >= 2.1
+        if [ $REDMINE_VERSION_MAJOR -ge 5 ]; then
           bin/rails test test/system/my_page_test.rb
         fi
         bin/rails redmine:plugins:test
