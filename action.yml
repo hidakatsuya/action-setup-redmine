@@ -78,69 +78,28 @@ runs:
         echo GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage" >> $GITHUB_ENV
       shell: bash
 
-    - name: Set up PostgreSQL database connection for testing
+    - name: Set up PostgreSQL database
       if: ${{ startsWith(inputs.database, 'postgres:') }}
-      run: |
-        sudo apt-get install -y --no-install-recommends libpq-dev
-
-        docker run \
-          --name redmine-postgres \
-          -e POSTGRES_PASSWORD=postgres \
-          -p 5432:5432 \
-          -d ${{ inputs.database }}
-
-        cat <<EOS > config/database.yml
-          test:
-            adapter: postgresql
-            database: redmine_test
-            encoding: utf8
-            host: localhost
-            port: 5432
-            username: postgres
-            password: postgres
-        EOS
+      run: ./scripts/setup-db-postgresql.sh
       shell: bash
-      working-directory: ${{ inputs.path }}
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
+        DATABASE: ${{ inputs.database }}
 
-    - name: Set up MySQL database connection for testing
+    - name: Set up MySQL database
       if: ${{ startsWith(inputs.database, 'mysql:') }}
-      run: |
-        sudo apt-get install -y --no-install-recommends default-mysql-client
-
-        docker run \
-          --name redmine-mysql \
-          -e MYSQL_ROOT_PASSWORD=password \
-          -e MYSQL_DATABASE=redmine_test \
-          -p 3306:3306 \
-          -d ${{ inputs.database }} \
-          --character-set-server=utf8mb4 \
-          --collation-server=utf8mb4_unicode_ci
-
-        cat <<EOS > config/database.yml
-          test:
-            adapter: mysql2
-            database: redmine_test
-            host: 127.0.0.1
-            port: 3306
-            username: root
-            password: password
-            encoding: utf8mb4
-        EOS
+      run: ./scripts/setup-db-mysql.sh
       shell: bash
-      working-directory: ${{ inputs.path }}
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
+        DATABASE: ${{ inputs.database }}
 
-    - name: Set up SQLite3 database connection for testing
+    - name: Set up SQLite3 database
       if: ${{ inputs.database == 'sqlite3' }}
-      run: |
-        sudo apt-get install -y --no-install-recommends libsqlite3-dev
-
-        cat <<EOS > config/database.yml
-          test:
-            adapter: sqlite3
-            database: db/test.sqlite3
-        EOS
+      run: ./scripts/setup-db-sqlite3.sh
       shell: bash
-      working-directory: ${{ inputs.path }}
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
 
       # https://www.redmine.org/issues/40802
     - name: Fix LoadError in Redmine 4.2
