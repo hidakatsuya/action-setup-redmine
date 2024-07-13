@@ -7,24 +7,24 @@ branding:
 
 inputs:
   repository:
-    description: 'Redmine repository to setup. Default is redmine/redmine.'
+    description: "Redmine repository to setup. Default is redmine/redmine."
     required: true
-    default: 'redmine/redmine'
+    default: "redmine/redmine"
   version:
-    description: 'The branch, tag or commit to checkout. Default is master.'
+    description: "The branch, tag or commit to checkout. Default is master."
     required: true
-    default: 'master'
+    default: "master"
   database:
-    description: 'Database to use for testing. Possible values are sqlite3 or PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.4.0). Default is sqlite3'
+    description: "Database to use for testing. Possible values are sqlite3 or PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.4.0). Default is sqlite3"
     required: true
-    default: 'sqlite3'
+    default: "sqlite3"
   ruby-version:
     description: "Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions."
     required: true
   path:
-    description: 'Directory to setup Redmine. Default is the current directory.'
+    description: "Directory to setup Redmine. Default is the current directory."
     required: true
-    default: '.'
+    default: "."
 
 runs:
   using: composite
