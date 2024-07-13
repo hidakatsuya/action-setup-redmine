@@ -51,32 +51,25 @@ runs:
       env:
         REDMINE_DIR: ${{ inputs.path }}
 
-    - name: Install dependencies
+    - name: Set up base environment
       run: |
-        sudo apt-get update; \
-        sudo apt-get install -y --no-install-recommends \
-          build-essential \
-          bzr git mercurial subversion cvs \
-          ghostscript \
-          gsfonts \
-          imagemagick libmagick++-dev \
-          libnss3-dev;
-      shell: bash
+        major_version_with_branch=$REDMINE_VERSION_MAJOR.$REDMINE_VERSION_MINOR.$REDMINE_VERSION_BRANCH
 
-    - name: Allow ImageMagick to read PDF files
-      run: |
-        sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
-      shell: bash
+        case $major_version_with_branch in
+          5.1.devel)
+            setup_version="next";;
+          5.1*|5.0*|4.2*)
+            setup_version="$REDMINE_VERSION_MAJOR.$REDMINE_VERSION_MINOR";;
+          *)
+            setup_version="next";;
+        esac
 
-    - name: Set up Google Chrome for system tests
-      run: |
-        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends google-chrome-stable
+        echo "Running scripts/setup-base-$setup_version.sh for Redmine $REDMINE_VERSION ..."
 
-        echo GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage" >> $GITHUB_ENV
+        ./scripts/setup-base-$setup_version.sh
       shell: bash
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
 
     - name: Set up PostgreSQL database
       if: ${{ startsWith(inputs.database, 'postgres:') }}
@@ -100,13 +93,6 @@ runs:
       shell: bash
       env:
         REDMINE_DIR: ${{ inputs.path }}
-
-      # https://www.redmine.org/issues/40802
-    - name: Fix LoadError in Redmine 4.2
-      if: ${{ env.REDMINE_VERSION_MAJOR < 5 }}
-      run: echo "gem 'builder', '~> 3.2.4'" >> Gemfile.local
-      shell: bash
-      working-directory: ${{ inputs.path }}
 
     - name: Set up Ruby and install dependencies
       uses: ruby/setup-ruby@v1
