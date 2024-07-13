@@ -7,24 +7,24 @@ branding:
 
 inputs:
   repository:
-    description: 'Redmine repository to setup. Default is redmine/redmine.'
+    description: "Redmine repository to setup. Default is redmine/redmine."
     required: true
-    default: 'redmine/redmine'
+    default: "redmine/redmine"
   version:
-    description: 'The branch, tag or commit to checkout. Default is master.'
+    description: "The branch, tag or commit to checkout. Default is master."
     required: true
-    default: 'master'
+    default: "master"
   database:
-    description: 'Database to use for testing. Possible values are sqlite3 or PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.4.0). Default is sqlite3'
+    description: "Database to use for testing. Possible values are sqlite3 or PostgreSQL and MySQL Docker official image tags (e.g. postgres:14, mysql:8.4.0). Default is sqlite3"
     required: true
-    default: 'sqlite3'
+    default: "sqlite3"
   ruby-version:
     description: "Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions."
     required: true
   path:
-    description: 'Directory to setup Redmine. Default is the current directory.'
+    description: "Directory to setup Redmine. Default is the current directory."
     required: true
-    default: '.'
+    default: "."
 
 runs:
   using: composite
@@ -51,103 +51,58 @@ runs:
       env:
         REDMINE_DIR: ${{ inputs.path }}
 
-    - name: Install dependencies
+    - name: Check if the Redmine version is supported
       run: |
-        sudo apt-get update; \
-        sudo apt-get install -y --no-install-recommends \
-          build-essential \
-          bzr git mercurial subversion cvs \
-          ghostscript \
-          gsfonts \
-          imagemagick libmagick++-dev \
-          libnss3-dev;
+        if [ $redmine_version_number -lt $MINIUMUM_SUPPORTED_REDMINE_VERSION ]; then
+          echo "Redmine version $REDMINE_VERSION is not supported."
+          exit 1
+        fi
       shell: bash
+      env:
+        MINIUMUM_SUPPORTED_REDMINE_VERSION: "420" # v4.2.0
 
-    - name: Allow ImageMagick to read PDF files
+    - name: Set up base environment
       run: |
-        sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
+        major_version_with_branch=$REDMINE_VERSION_MAJOR.$REDMINE_VERSION_MINOR.$REDMINE_VERSION_BRANCH
+
+        case $major_version_with_branch in
+          5.1.devel)
+            setup_version="next";;
+          5.1*|5.0*|4.2*)
+            setup_version="$REDMINE_VERSION_MAJOR.$REDMINE_VERSION_MINOR";;
+          *)
+            setup_version="next";;
+        esac
+
+        echo "Running scripts/setup-base-$setup_version.sh for Redmine $REDMINE_VERSION ..."
+
+        ./scripts/setup-base-$setup_version.sh
       shell: bash
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
 
-    - name: Set up Google Chrome for system tests
-      run: |
-        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends google-chrome-stable
-
-        echo GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Set up PostgreSQL database connection for testing
+    - name: Set up PostgreSQL database
       if: ${{ startsWith(inputs.database, 'postgres:') }}
-      run: |
-        sudo apt-get install -y --no-install-recommends libpq-dev
-
-        docker run \
-          --name redmine-postgres \
-          -e POSTGRES_PASSWORD=postgres \
-          -p 5432:5432 \
-          -d ${{ inputs.database }}
-
-        cat <<EOS > config/database.yml
-          test:
-            adapter: postgresql
-            database: redmine_test
-            encoding: utf8
-            host: localhost
-            port: 5432
-            username: postgres
-            password: postgres
-        EOS
+      run: ./scripts/setup-db-postgresql.sh
       shell: bash
-      working-directory: ${{ inputs.path }}
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
+        DATABASE: ${{ inputs.database }}
 
-    - name: Set up MySQL database connection for testing
+    - name: Set up MySQL database
       if: ${{ startsWith(inputs.database, 'mysql:') }}
-      run: |
-        sudo apt-get install -y --no-install-recommends default-mysql-client
-
-        docker run \
-          --name redmine-mysql \
-          -e MYSQL_ROOT_PASSWORD=password \
-          -e MYSQL_DATABASE=redmine_test \
-          -p 3306:3306 \
-          -d ${{ inputs.database }} \
-          --character-set-server=utf8mb4 \
-          --collation-server=utf8mb4_unicode_ci
-
-        cat <<EOS > config/database.yml
-          test:
-            adapter: mysql2
-            database: redmine_test
-            host: 127.0.0.1
-            port: 3306
-            username: root
-            password: password
-            encoding: utf8mb4
-        EOS
+      run: ./scripts/setup-db-mysql.sh
       shell: bash
-      working-directory: ${{ inputs.path }}
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
+        DATABASE: ${{ inputs.database }}
 
-    - name: Set up SQLite3 database connection for testing
+    - name: Set up SQLite3 database
       if: ${{ inputs.database == 'sqlite3' }}
-      run: |
-        sudo apt-get install -y --no-install-recommends libsqlite3-dev
-
-        cat <<EOS > config/database.yml
-          test:
-            adapter: sqlite3
-            database: db/test.sqlite3
-        EOS
+      run: ./scripts/setup-db-sqlite3.sh
       shell: bash
-      working-directory: ${{ inputs.path }}
-
-      # https://www.redmine.org/issues/40802
-    - name: Fix LoadError in Redmine 4.2
-      if: ${{ env.REDMINE_VERSION_MAJOR < 5 }}
-      run: echo "gem 'builder', '~> 3.2.4'" >> Gemfile.local
-      shell: bash
-      working-directory: ${{ inputs.path }}
+      env:
+        REDMINE_DIR: ${{ inputs.path }}
 
     - name: Set up Ruby and install dependencies
       uses: ruby/setup-ruby@v1
