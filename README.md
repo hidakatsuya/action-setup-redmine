@@ -28,6 +28,10 @@ This action installs Redmine and sets up an environment to run tests. It is prim
 
 See also [action.yml](./action.yml).
 
+## Supported Redmine version
+
+v4.2 or later
+
 ## Example
 
 ### Setting up [RedMica](https://github.com/redmica/redmica)
