@@ -84,8 +84,7 @@ jobs:
         run: bin/rails test test/unit/news_test.rb
         working-directory: ${{ env.REDMINE_SRC }}
 
-      - name: Run system test if Redmine >= 5.0
-        if: ${{ env.REDMINE_VERSION_MAJOR >= 5 }}
+      - name: Run system test
         run: bin/rails test test/system/my_page_test.rb
         working-directory: ${{ env.REDMINE_SRC }}
 
