@@ -43,11 +43,11 @@ jobs:
             expected-about-redmine-version: '2\.0\.[0-9]\+\.stable'
 
           - redmine-repository: "redmica/redmica"
-            redmine-version: "stable-2.4"
+            redmine-version: "stable-3.0"
             redmine-database: "postgres:14"
-            ruby-version: "3.2"
+            ruby-version: "3.3"
             expected-about-db-adapter: "PostgreSQL"
-            expected-about-redmine-version: '2\.4\.[0-9]\+\.stable'
+            expected-about-redmine-version: '3\.0\.[0-9]\+\.stable'
 
     steps:
       - uses: actions/checkout@v4
