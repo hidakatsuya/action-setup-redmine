@@ -53,13 +53,13 @@ runs:
 
     - name: Check if the Redmine version is supported
       run: |
-        if [ $redmine_version_number -lt $MINIUMUM_SUPPORTED_REDMINE_VERSION ]; then
+        if [ $REDMINE_MAJOR_VERSION_NUMNER -lt $MINIUMUM_SUPPORTED_REDMINE_VERSION ]; then
           echo "Redmine version $REDMINE_VERSION is not supported."
           exit 1
         fi
       shell: bash
       env:
-        MINIUMUM_SUPPORTED_REDMINE_VERSION: "420" # v4.2.0
+        MINIUMUM_SUPPORTED_REDMINE_VERSION: "402" # v4.2.x
 
     - name: Set up base environment
       run: |
