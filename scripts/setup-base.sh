@@ -16,4 +16,4 @@ esac
 
 echo "Running scripts/setup-base-$setup_version.sh for Redmine $REDMINE_VERSION ..."
 
-./scripts/setup-base-$setup_version.sh
+$GITHUB_ACTION_PATH/scripts/setup-base-$setup_version.sh
