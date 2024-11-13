@@ -59,7 +59,7 @@ runs:
         fi
       shell: bash
       env:
-        MINIUMUM_SUPPORTED_REDMINE_VERSION: "402" # v4.2.x
+        MINIUMUM_SUPPORTED_REDMINE_VERSION: "500" # v5.0.0
 
     - name: Set up base environment
       run: ./scripts/setup-base.sh
