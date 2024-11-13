@@ -30,7 +30,7 @@ See also [action.yml](./action.yml).
 
 ## Supported Redmine version
 
-v4.2 or later
+v5.0 or later
 
 ## Example
 
@@ -39,10 +39,10 @@ v4.2 or later
 ```yaml
 - uses: hidakatsuya/action-setup-redmine@v1
   with:
-    repository: 'redmica/redmica'
-    version: 'v2.4.2'
+    repository: 'redmine/redmine'
+    version: 'v6.0.1'
     database: 'postgres:14'
-    ruby-version: '3.2'
+    ruby-version: '3.3'
 ```
 
 ### Run a test for the Redmine plugin
