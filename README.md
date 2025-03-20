@@ -7,7 +7,7 @@ This action installs Redmine and sets up an environment to run tests. It is prim
 ## Usage
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@v2
+- uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
   with:
     # Redmine repository to setup. Default is redmine/redmine.
     repository: 'redmine/redmine'
@@ -39,7 +39,7 @@ If you want to use it with Redmine v4.2, you can use `v1`.
 ### Setting up [RedMica](https://github.com/redmica/redmica)
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@v2
+- uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
   with:
     repository: 'redmine/redmine'
     version: 'v6.0.1'
@@ -52,7 +52,7 @@ If you want to use it with Redmine v4.2, you can use `v1`.
 For example, you are developing the `redmine_hello_world` plugin on GitHub repository. To run a test for that plugin in GitHub Action, do the following:
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@v2
+- uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
   with:
     ruby-version: '3.3'
 
