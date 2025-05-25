@@ -47,9 +47,9 @@ If you want to use it with Redmine v4.2, you can use `v1`.
     ruby-version: '3.3'
 ```
 
-### Run a test for the Redmine plugin
+### Running Redmine plugin tests
 
-For example, you are developing the `redmine_hello_world` plugin on GitHub repository. To run a test for that plugin in GitHub Action, do the following:
+For example, you are developing the `redmine_hello_world` plugin on GitHub repository. To run tests for that plugin in GitHub Action, do the following:
 
 ```yaml
 - uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
