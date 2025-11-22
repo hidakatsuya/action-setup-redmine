@@ -10,7 +10,7 @@ This action installs Redmine and sets up an environment to run tests. It is prim
 runs-on: ubuntu-latest
 
 steps:
-- uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
+- uses: hidakatsuya/action-setup-redmine@v3
   with:
     # Redmine repository to setup. Default is redmine/redmine.
     repository: 'redmine/redmine'
@@ -23,7 +23,7 @@ steps:
     database: 'sqlite3'
 
     # Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions.
-    ruby-version: '3.3'
+    ruby-version: '3.4'
 
     # Directory to setup Redmine. Default is the current directory.
     path: '.'
@@ -33,9 +33,9 @@ See also [action.yml](./action.yml).
 
 ## Supported Redmine versions
 
-v5.0 or later
+v5.1 or later
 
-If you want to use it with Redmine v4.2, you can use `v1`.
+If you want to use it with Redmine v5.0, you can use `v2`.
 
 ## Supported runners
 
@@ -56,12 +56,12 @@ Environment variables:
 ### Setting up [RedMica](https://github.com/redmica/redmica)
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
+- uses: hidakatsuya/action-setup-redmine@v3
   with:
     repository: 'redmine/redmine'
-    version: 'v6.0.1'
+    version: 'v6.1.0'
     database: 'postgres:14'
-    ruby-version: '3.3'
+    ruby-version: '3.4'
 ```
 
 ### Running Redmine plugin tests
@@ -69,11 +69,11 @@ Environment variables:
 For example, you are developing the `redmine_hello_world` plugin on GitHub repository. To run tests for that plugin in GitHub Action, do the following:
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
+- uses: hidakatsuya/action-setup-redmine@v3
   with:
-    ruby-version: '3.3'
+    ruby-version: '3.4'
 
-- uses: action/checkout@v4
+- uses: action/checkout@v6
   with:
     path: plugins/redmine_hello_world
 
