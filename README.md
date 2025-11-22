@@ -43,6 +43,12 @@ ubuntu-24.04 or later
 
 ## Environment details
 
+Unicode fonts:
+
+* DejaVu font
+
+Environment variables:
+
 * `GOOGLE_CHROME_OPTS_ARGS`: `headless,disable-gpu,no-sandbox,disable-dev-shm-usage`
 
 ## Example

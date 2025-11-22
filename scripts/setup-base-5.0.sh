@@ -7,6 +7,7 @@ sudo apt-get update; \
 sudo apt-get install -y --no-install-recommends \
      build-essential \
      bzr git mercurial subversion cvs \
+     fonts-dejavu-core fonts-dejavu-extra \
      ghostscript \
      gsfonts \
      imagemagick libmagick++-dev \
