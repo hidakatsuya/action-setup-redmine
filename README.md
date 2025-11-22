@@ -7,6 +7,9 @@ This action installs Redmine and sets up an environment to run tests. It is prim
 ## Usage
 
 ```yaml
+runs-on: ubuntu-latest
+
+steps:
 - uses: hidakatsuya/action-setup-redmine@0147e23d3e5516edf2a0d2cca095570283ca81b4 # v2.0.0
   with:
     # Redmine repository to setup. Default is redmine/redmine.
@@ -28,11 +31,19 @@ This action installs Redmine and sets up an environment to run tests. It is prim
 
 See also [action.yml](./action.yml).
 
-## Supported Redmine version
+## Supported Redmine versions
 
 v5.0 or later
 
 If you want to use it with Redmine v4.2, you can use `v1`.
+
+## Supported runners
+
+ubuntu-24.04 or later
+
+## Environment details
+
+* `GOOGLE_CHROME_OPTS_ARGS`: `headless,disable-gpu,no-sandbox,disable-dev-shm-usage`
 
 ## Example
 
