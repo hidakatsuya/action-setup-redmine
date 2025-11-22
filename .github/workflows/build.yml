@@ -22,25 +22,25 @@ jobs:
       matrix:
         include:
           - redmine-repository: "redmine/redmine"
-            redmine-version: "6.0-stable"
+            redmine-version: "6.1-stable"
             redmine-database: "sqlite3"
-            ruby-version: "3.3"
+            ruby-version: "3.4"
             expected-about-db-adapter: "SQLite"
-            expected-about-redmine-version: '6\.0\.[0-9]\+\.stable'
+            expected-about-redmine-version: '6\.1\.[0-9]\+\.stable'
 
           - redmine-repository: "redmine/redmine"
-            redmine-version: "5.1-stable"
+            redmine-version: "6.0-stable"
             redmine-database: "mysql:8.1"
-            ruby-version: "3.2"
+            ruby-version: "3.3"
             expected-about-db-adapter: "Mysql2"
-            expected-about-redmine-version: '5\.1\.[0-9]\+\.stable'
+            expected-about-redmine-version: '6\.0\.[0-9]\+\.stable'
 
           - redmine-repository: "redmica/redmica"
-            redmine-version: "stable-3.0"
+            redmine-version: "stable-4.0"
             redmine-database: "postgres:14"
-            ruby-version: "3.3"
+            ruby-version: "3.4"
             expected-about-db-adapter: "PostgreSQL"
-            expected-about-redmine-version: '3\.0\.[0-9]\+\.stable'
+            expected-about-redmine-version: '4\.0\.[0-9]\+\.stable'
 
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -78,10 +78,8 @@ jobs:
         working-directory: ${{ env.REDMINE_SRC }}
 
       - name: Run system test
-        run: bin/rails test test/system/my_page_test.rb
+        run: bin/rails test test/system/versions_test.rb
         working-directory: ${{ env.REDMINE_SRC }}
-        # Allow system test to fail temporarily because system tests sometimes fail due to Chrome or Capybara, Selenium, etc.
-        continue-on-error: true
 
       - name: Run plugin test
         run: bin/rails redmine:plugins:test
