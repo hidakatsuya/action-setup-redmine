@@ -59,7 +59,7 @@ runs:
         fi
       shell: bash
       env:
-        MINIUMUM_SUPPORTED_REDMINE_VERSION: "500" # v5.0.0
+        MINIUMUM_SUPPORTED_REDMINE_VERSION: "510" # v5.1.0
 
     - name: Set up base environment
       run: $GITHUB_ACTION_PATH/scripts/setup-base.sh
