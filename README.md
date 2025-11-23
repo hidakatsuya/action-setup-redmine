@@ -58,8 +58,8 @@ Environment variables:
 ```yaml
 - uses: hidakatsuya/action-setup-redmine@v3.0.0
   with:
-    repository: 'redmine/redmine'
-    version: 'v6.1.0'
+    repository: 'redmica/redmica'
+    version: 'v4.0.0'
     database: 'postgres:14'
     ruby-version: '3.4'
 ```
