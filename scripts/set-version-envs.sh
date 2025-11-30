@@ -25,7 +25,7 @@ echo "REDMINE_VERSION_TINY=$version_tiny" >> $GITHUB_ENV
 echo "REDMINE_VERSION_BRANCH=$version_branch" >> $GITHUB_ENV
 
 # v5.1.3.stable -> 501
-echo "REDMINE_MAJOR_VERSION_NUMNER=$redmine_major_version_number" >> $GITHUB_ENV
+echo "REDMINE_MAJOR_VERSION_NUMBER=$redmine_major_version_number" >> $GITHUB_ENV
 
 # Output version information
 echo "Redmine Version: $redmine_version"

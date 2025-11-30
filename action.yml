@@ -53,13 +53,13 @@ runs:
 
     - name: Check if the Redmine version is supported
       run: |
-        if [ $REDMINE_MAJOR_VERSION_NUMNER -lt $MINIUMUM_SUPPORTED_REDMINE_VERSION ]; then
+        if [ $REDMINE_MAJOR_VERSION_NUMBER -lt $MINIUMUM_SUPPORTED_REDMINE_VERSION ]; then
           echo "Redmine version $REDMINE_VERSION is not supported."
           exit 1
         fi
       shell: bash
       env:
-        MINIUMUM_SUPPORTED_REDMINE_VERSION: "510" # v5.1.0
+        MINIUMUM_SUPPORTED_REDMINE_VERSION: "501" # v5.1.0
 
     - name: Set up base environment
       run: $GITHUB_ACTION_PATH/scripts/setup-base.sh
