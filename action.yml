@@ -39,7 +39,7 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
 
     - name: Checkout Redmine source code
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       with:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.version }}
@@ -91,7 +91,7 @@ runs:
         REDMINE_DIR: ${{ inputs.path }}
 
     - name: Set up Ruby and install dependencies
-      uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
+      uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
       with:
         ruby-version: ${{ inputs.ruby-version }}
         bundler-cache: true
