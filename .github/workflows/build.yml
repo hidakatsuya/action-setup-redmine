@@ -22,6 +22,13 @@ jobs:
       matrix:
         include:
           - redmine-repository: "redmine/redmine"
+            redmine-version: "7.0-stable"
+            redmine-database: "sqlite3"
+            ruby-version: "4.0"
+            expected-about-db-adapter: "SQLite"
+            expected-about-redmine-version: '7\.0\.[0-9]\+\.stable'
+
+          - redmine-repository: "redmine/redmine"
             redmine-version: "6.1-stable"
             redmine-database: "sqlite3"
             ruby-version: "3.4"
@@ -34,13 +41,6 @@ jobs:
             ruby-version: "3.3"
             expected-about-db-adapter: "Mysql2"
             expected-about-redmine-version: '6\.0\.[0-9]\+\.stable'
-
-          - redmine-repository: "redmine/redmine"
-            redmine-version: "5.1-stable"
-            redmine-database: "sqlite3"
-            ruby-version: "3.2"
-            expected-about-db-adapter: "SQLite"
-            expected-about-redmine-version: '5\.1\.[0-9]\+\.stable'
 
           - redmine-repository: "redmica/redmica"
             redmine-version: "stable-4.1"

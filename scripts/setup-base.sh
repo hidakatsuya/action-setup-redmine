@@ -2,13 +2,13 @@
 
 set -eu
 
-# v5.1.3.stable -> 5.1.stable
+# v7.0.1.stable -> 7.0.stable
 major_version_with_branch=$REDMINE_VERSION_MAJOR.$REDMINE_VERSION_MINOR.$REDMINE_VERSION_BRANCH
 
 case $major_version_with_branch in
-    6.1.devel)
+    7.0.devel)
         setup_version="next";;
-    6.1*|6.0*|5.1*)
+    7.0*|6.1*|6.0*)
         setup_version="$REDMINE_VERSION_MAJOR.$REDMINE_VERSION_MINOR";;
     *)
         setup_version="next";;
