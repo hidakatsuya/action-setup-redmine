@@ -11,6 +11,7 @@ sudo apt-get install -y --no-install-recommends \
      ghostscript \
      gsfonts \
      imagemagick libmagick++-dev \
+     pandoc \
      libnss3-dev;
 
 # Allow ImageMagick to read PDF files

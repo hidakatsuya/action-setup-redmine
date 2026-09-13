@@ -39,7 +39,7 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
 
     - name: Checkout Redmine source code
-      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         repository: ${{ inputs.repository }}
         ref: ${{ inputs.version }}
@@ -59,7 +59,7 @@ runs:
         fi
       shell: bash
       env:
-        MINIUMUM_SUPPORTED_REDMINE_VERSION: "501" # v5.1.0
+        MINIUMUM_SUPPORTED_REDMINE_VERSION: "600" # v6.0.0
 
     - name: Set up base environment
       run: $GITHUB_ACTION_PATH/scripts/setup-base.sh
@@ -91,7 +91,7 @@ runs:
         REDMINE_DIR: ${{ inputs.path }}
 
     - name: Set up Ruby and install dependencies
-      uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
+      uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
       with:
         ruby-version: ${{ inputs.ruby-version }}
         bundler-cache: true

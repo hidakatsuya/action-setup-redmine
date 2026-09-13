@@ -33,9 +33,9 @@ See also [action.yml](./action.yml).
 
 ## Supported Redmine versions
 
-v5.1 or later
+v6.0 or later
 
-If you want to use it with Redmine v5.0, you can use `v2`.
+If you want to use it with Redmine v5.1, you can use `v3`.
 
 ## Supported runners
 
@@ -73,7 +73,7 @@ For example, you are developing the `redmine_hello_world` plugin on GitHub repos
   with:
     ruby-version: '3.4'
 
-- uses: action/checkout@v6
+- uses: actions/checkout@v7
   with:
     path: plugins/redmine_hello_world
 
