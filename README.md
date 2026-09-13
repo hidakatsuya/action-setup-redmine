@@ -10,7 +10,7 @@ This action installs Redmine and sets up an environment to run tests. It is prim
 runs-on: ubuntu-latest
 
 steps:
-- uses: hidakatsuya/action-setup-redmine@v3.0.2
+- uses: hidakatsuya/action-setup-redmine@v4.0.0
   with:
     # Redmine repository to setup. Default is redmine/redmine.
     repository: 'redmine/redmine'
@@ -23,7 +23,7 @@ steps:
     database: 'sqlite3'
 
     # Ruby version to use for testing. See ruby/setup-ruby's ruby-version input for available versions.
-    ruby-version: '3.4'
+    ruby-version: '4.0'
 
     # Directory to setup Redmine. Default is the current directory.
     path: '.'
@@ -56,12 +56,12 @@ Environment variables:
 ### Setting up [RedMica](https://github.com/redmica/redmica)
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@v3.0.2
+- uses: hidakatsuya/action-setup-redmine@v4.0.0
   with:
     repository: 'redmica/redmica'
     version: 'v4.1.0'
     database: 'postgres:14'
-    ruby-version: '3.4'
+    ruby-version: '4.0'
 ```
 
 ### Running Redmine plugin tests
@@ -69,9 +69,9 @@ Environment variables:
 For example, you are developing the `redmine_hello_world` plugin on GitHub repository. To run tests for that plugin in GitHub Action, do the following:
 
 ```yaml
-- uses: hidakatsuya/action-setup-redmine@v3.0.2
+- uses: hidakatsuya/action-setup-redmine@v4.0.0
   with:
-    ruby-version: '3.4'
+    ruby-version: '4.0'
 
 - uses: actions/checkout@v7
   with:
