@@ -13,7 +13,9 @@ sudo apt-get install -y --no-install-recommends \
      imagemagick libmagick++-dev \
      libnss3-dev;
 
-# Allow ImageMagick to read PDF files
-sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
+# Allow ImageMagick 6 to read PDF files
+if [ -f /etc/ImageMagick-6/policy.xml ]; then
+    sudo sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml
+fi
 
 echo GOOGLE_CHROME_OPTS_ARGS="headless,disable-gpu,no-sandbox,disable-dev-shm-usage" >> $GITHUB_ENV
